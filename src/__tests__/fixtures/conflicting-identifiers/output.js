@@ -1,3 +1,4 @@
+import _foooo5 from "../foo";
 const _foooo4 = 4;
 
 function foo() {
