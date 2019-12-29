@@ -12,7 +12,7 @@ const looksLike = test => target => {
       if (typeof bVal === "function") {
         return bVal(aVal);
       }
-      return isPrimitive(bVal) ? bVal === aVal : looksLike(aVal, bVal);
+      return isPrimitive(bVal) ? bVal === aVal : looksLike(bVal)(aVal);
     })
   );
 };

@@ -12,7 +12,7 @@ function xyz() {
   }
 
   if (true) {
-    console.log("100");
+    console.log(["100", { foo: { y: [{ x: 1 }] } }]);
   }
 
   otherFunction();
