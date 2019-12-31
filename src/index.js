@@ -21,6 +21,7 @@ const cloneArguments = args => {
 };
 
 const links = new Set();
+const bindings = {};
 
 function plugin() {
   return {
@@ -36,52 +37,39 @@ function plugin() {
           links.clear();
         },
         exit(path) {
+          console.log("bindings:", Object.keys(bindings));
+          let id = path.scope.generateUidIdentifier("foooo");
+          while (id.name in bindings) {
+            id = path.scope.generateUidIdentifier("foooo");
+          }
+          console.log("Final id:", id);
           links.forEach(callPath => {
             const args = cloneArguments(callPath.get("arguments"));
-            const id = path.scope.generateUidIdentifier("foooo");
+            // const id = path.scope.generateUidIdentifier("foooo");
             const call = t.callExpression(id, args);
             callPath.replaceWith(call);
           });
 
-          if (links.size > 0) {
-            const declaration = t.importDeclaration(
-              [t.importDefaultSpecifier(t.identifier("foooo"))],
-              t.stringLiteral("../../foooo")
-            );
-            path.unshiftContainer("body", declaration);
-          }
+          // if (links.size > 0) {
+          //   const declaration = t.importDeclaration(
+          //     [t.importDefaultSpecifier(t.identifier("foooo"))],
+          //     t.stringLiteral("../../foooo")
+          //   );
+          //   path.unshiftContainer("body", declaration);
+          // }
         }
       },
 
       CallExpression(path) {
         if (isConsole(path)) {
           links.add(path);
-
-          // const args = cloneArguments(path.get("arguments"));
-          // const call = t.callExpression(t.identifier("foooo"), args);
-          // path.replaceWith(call);
-          // console.log('has biding for "fooo"', path.scope.hasBinding("fooo"));
-          // console.log('has biding for "dooo"', path.scope.hasBinding("dooo"));
-          // console.log('has biding for "bar"', path.scope.hasBinding("bar"));
+          Object.assign(bindings, { ...path.scope.getAllBindings() });
+          // console.log("bindings:", Object.keys(path.scope.getAllBindings()));
+          // console.log('has biding for "_foooo7"', path.scope.hasBinding("_foooo7"));
+          // console.log('has biding for "_foooo6"', path.scope.hasBinding("_foooo6"));
+          // console.log('has biding for "_foooo5"', path.scope.hasBinding("_foooo5"));
         }
       }
-
-      // FunctionDeclaration: {
-      //   enter(path) {
-      //     path
-      //       .get("body")
-      //       .unshiftContainer(
-      //         "body",
-      //         t.callExpression(
-      //           t.memberExpression(
-      //             t.identifier("console"),
-      //             t.identifier("time")
-      //           ),
-      //           [t.stringLiteral(path.node.id.name)]
-      //         )
-      //       );
-      //   }
-      // }
     }
   };
 }

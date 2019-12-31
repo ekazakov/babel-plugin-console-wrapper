@@ -4,24 +4,22 @@ const plugin = require("../index");
 
 pluginTester({
   plugin,
-  snapshot: true,
+  snapshot: false,
   tests: {
-    "test one": {
-      // skip: true,
-      fixture: path.join(__dirname, "fixtures/test-one/code.js")
-    },
-    "test two": {
-      fixture: path.join(__dirname, "fixtures/two/code.js")
-    },
-    "test three": {
-      // only: true,
-      fixture: path.join(__dirname, "fixtures/no-console-calls/code.js")
-    },
-    "test four": {
+    // "test one": {
+    //   fixture: path.join(__dirname, "fixtures/test-one/code.js")
+    // },
+    // "test two": {
+    //   fixture: path.join(__dirname, "fixtures/two/code.js")
+    // },
+    // "test three": {
+    //   fixture: path.join(__dirname, "fixtures/no-console-calls/code.js")
+    // },
+    "conflicting identifiers": {
       snapshot: false,
-      only: true,
+      // only: true,
       fixture: path.join(__dirname, "fixtures/conflicting-identifiers/code.js"),
-      fixtureOutput: path.join(
+      outputFixture: path.join(
         __dirname,
         "fixtures/conflicting-identifiers/output.js"
       )

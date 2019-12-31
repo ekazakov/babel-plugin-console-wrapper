@@ -1,9 +1,11 @@
-import _foooo5 from "../foo";
+import * as _foooo7 from "../foo";
+import _foooo5, { _foooo6 } from "../foo";
 const _foooo4 = 4;
 
 function foo() {
   let _foooo = 1;
-  console.log(_foooo);
+
+  _foooo8(_foooo);
 }
 
 function foo1() {
@@ -11,6 +13,9 @@ function foo1() {
 
   function inner_foo() {
     let _foooo2 = 2;
-    console.log(_foooo2);
+
+    _foooo8(_foooo2);
+
+    _foooo8(_foooo5);
   }
 }
