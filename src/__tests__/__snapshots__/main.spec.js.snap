@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Babel plugin console wrapper should transform with options 1`] = `
+"import _testWrapper from '../../foo/bar/testWrapper';
+function abc() {
+    for (var i = 0; i < 100; i++) {
+        _testWrapper(i, {
+            line: 3,
+            column: 8,
+            filePath: './src/__tests__/fixtures/simple.js'
+        });
+    }
+
+    return 42;
+}
+
+function xyz() {
+    for (var i = 0; i < 100; i++) {
+        _testWrapper(i, {
+            line: 11,
+            column: 8,
+            filePath: './src/__tests__/fixtures/simple.js'
+        });
+    }
+
+    if (true) {
+        _testWrapper(['100', { foo: { y: [{ x: 1 }] } }], {
+            line: 15,
+            column: 8,
+            filePath: './src/__tests__/fixtures/simple.js'
+        });
+    }
+
+    otherFunction();
+}
+
+function outer() {
+    function inner() {
+        _testWrapper('does something', {
+            line: 23,
+            column: 8,
+            filePath: './src/__tests__/fixtures/simple.js'
+        });
+    }
+
+    return inner;
+}"
+`;

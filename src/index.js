@@ -1,5 +1,6 @@
 const t = require('babel-types');
-const { map, findLast, isNumber } = require('lodash');
+const { map, findLast, isNumber, head, get } = require('lodash');
+const pathModule = require('path');
 const { looksLike } = require('./utils/index');
 
 const isConsole = looksLike({
@@ -23,24 +24,33 @@ const cloneArguments = args => {
 const links = new Set();
 const bindings = {};
 
+function assertOption(opts, name) {
+    if (!get(opts, name)) {
+        throw Error(`babel-plugin-console-wrapper: '${name}' option is not specified`);
+    }
+}
+
 function plugin() {
     return {
         name: 'console-wrapper',
         visitor: {
-            /*
-     TODO:
-     */
             Program: {
                 enter(path) {
                     links.clear();
                 },
-                exit(path) {
+                exit(path, state) {
+                    assertOption(state.opts, 'fnName');
+                    assertOption(state.opts, 'fnImportPath');
+                    assertOption(state.opts, 'srcRoot');
+
+                    const { fnName, fnImportPath, srcRoot } = state.opts;
+
                     const { filename, root } = path.hub.file.opts;
                     const filePath = filename.replace(root, '.');
                     // console.log('filePath:', filePath);
-                    let id = path.scope.generateUid('foooo');
+                    let id = path.scope.generateUid(fnName);
                     while (id.name in bindings) {
-                        id = path.scope.generateUid('foooo');
+                        id = path.scope.generateUid(fnName);
                     }
 
                     links.forEach(callPath => {
@@ -61,15 +71,23 @@ function plugin() {
                     });
 
                     if (links.size > 0) {
+                        const importPath = pathModule.join(
+                            srcRoot,
+                            pathModule.relative(filePath, fnImportPath)
+                        );
                         const declaration = t.importDeclaration(
                             [t.importDefaultSpecifier(t.identifier(id))],
-                            t.stringLiteral('../../foooo')
+                            t.stringLiteral(importPath)
                         );
                         const body = path.get('body');
                         const lastImportPath = findLast(body, {
                             type: 'ImportDeclaration'
                         });
-                        lastImportPath.insertAfter(declaration);
+                        if (lastImportPath) {
+                            lastImportPath.insertAfter(declaration);
+                        } else {
+                            head(body).insertBefore(declaration);
+                        }
                     }
                 }
             },
