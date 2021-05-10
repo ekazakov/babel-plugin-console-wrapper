@@ -16,7 +16,7 @@
     "eslint-plugin-import": "2.19.1",
     "eslint-plugin-jest": "23.1.1",
     "jest": "24.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "prettier": "1.19.1"
   },
   "jest": {
